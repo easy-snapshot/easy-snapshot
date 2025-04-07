@@ -72,6 +72,6 @@ function main(dirPath) {
   checkSnapshotTestForPaths(testableFileObjects);
 }
 
-exports.easySnap = function () {
+exports.easySnapshot = function () {
   main();
 };
