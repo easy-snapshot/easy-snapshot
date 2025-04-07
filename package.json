@@ -1,0 +1,24 @@
+{
+  "name": "easy-snapshot",
+  "version": "1.0.0",
+  "description": "Get started with snapshot testing instantly.",
+  "main": "easy-snapshot.js",
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/easy-snapshot/easy-snapshot.git"
+  },
+  "keywords": [
+    "snapshot",
+    "test",
+    "testing"
+  ],
+  "author": "Damien Rembert",
+  "license": "GPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/easy-snapshot/easy-snapshot/issues"
+  },
+  "homepage": "https://github.com/easy-snapshot/easy-snapshot#readme"
+}
