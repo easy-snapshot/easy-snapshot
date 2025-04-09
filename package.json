@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/easy-snapshot/easy-snapshot/issues"
   },
-  "homepage": "https://github.com/easy-snapshot/easy-snapshot#readme"
+  "homepage": "https://github.com/easy-snapshot/easy-snapshot#readme",
+  "dependencies": {
+    "jest": "^29.7.0"
+  }
 }
