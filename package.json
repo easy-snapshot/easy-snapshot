@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "test": "",
-    "checks": "prettier . --write ; eslint ."
+    "checks": "prettier . --write ; tsc --noEmit ; eslint ."
   },
   "repository": {
     "type": "git",
