@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "",
-    "checks": "eslint ."
+    "checks": "prettier . --write ; eslint ."
   },
   "repository": {
     "type": "git",
@@ -31,6 +31,8 @@
     "@types/jest": "^29.5.14",
     "@types/node": "^22.14.1",
     "eslint": "^9.24.0",
+    "eslint-config-prettier": "^10.1.2",
+    "prettier": "^3.5.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.29.1"
   }
