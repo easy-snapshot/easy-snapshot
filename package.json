@@ -8,7 +8,7 @@
     "./dist/"
   ],
   "scripts": {
-    "test": "",
+    "test": "jest",
     "checks": "prettier . --write ; tsc --noEmit ; eslint ."
   },
   "repository": {
@@ -36,6 +36,7 @@
     "eslint": "9.24.0",
     "eslint-config-prettier": "10.1.2",
     "prettier": "3.5.3",
+    "ts-jest": "29.3.2",
     "typescript": "5.8.3",
     "typescript-eslint": "8.29.1"
   }
