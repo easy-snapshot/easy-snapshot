@@ -12,7 +12,7 @@ function checkSnapshot(testableFileObject: TestableFileObject) {
 }
 
 function isTestableFile(filePath: string) {
-  let isFile = fs.existsSync(filePath) && fs.lstatSync(filePath).isFile();
+  const isFile = fs.existsSync(filePath) && fs.lstatSync(filePath).isFile();
   if (isFile) {
     return path.extname(filePath).toLowerCase() === ".html";
   }
@@ -22,7 +22,7 @@ function isTestableFile(filePath: string) {
 function findTestableFiles(directory: string): string[] {
   const entries = fs.readdirSync(directory);
 
-  let testableFiles = [];
+  const testableFiles = [];
 
   for (const entry of entries) {
     const entryPath = path.join(directory, entry);
@@ -61,7 +61,7 @@ export function easySnapshot(dirPath: string) {
   checkSnapshotTestForPaths(testableFileObjects);
 }
 
-type TestableFileObject = {
+interface TestableFileObject {
   relative: string;
   absolute: string;
-};
+}
