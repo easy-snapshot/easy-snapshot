@@ -2,8 +2,11 @@
   "name": "easy-snapshot",
   "version": "1.0.0",
   "description": "Get started with snapshot testing instantly.",
-  "main": "easy-snapshot.js",
-  "type": "module",
+  "main": "./dist/easy-snapshot.js",
+  "types": "./dist/easy-snapshot.d.ts",
+  "files": [
+    "./dist/"
+  ],
   "scripts": {
     "test": "",
     "checks": "prettier . --write ; eslint ."
