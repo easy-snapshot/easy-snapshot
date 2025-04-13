@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Get started with snapshot testing instantly.",
   "main": "easy-snapshot.js",
+  "type": "module",
   "scripts": {
     "test": ""
   },
