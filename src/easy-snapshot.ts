@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
 
-function checkSnapshot(testableFileObject: TestableFileObject) {
+function runSnapshot(testableFileObject: TestableFileObject) {
   describe(testableFileObject.relative + " Snapshot", () => {
     it("should match the saved snapshot", () => {
       const htmlContent = fs.readFileSync(testableFileObject.absolute, "utf8");
@@ -11,9 +11,12 @@ function checkSnapshot(testableFileObject: TestableFileObject) {
   });
 }
 
-function isTestableFile(filePath: string) {
-  const isFile = fs.existsSync(filePath) && fs.lstatSync(filePath).isFile();
-  if (isFile) {
+function isFile(filePath: string) {
+  return fs.existsSync(filePath) && fs.lstatSync(filePath).isFile();
+}
+
+function shouldTest(filePath: string) {
+  if (isFile(filePath)) {
     return path.extname(filePath).toLowerCase() === ".html";
   }
   return false;
@@ -29,16 +32,16 @@ function findTestableFiles(directory: string): string[] {
 
     if (fs.existsSync(entryPath) && fs.lstatSync(entryPath).isDirectory()) {
       testableFiles.push(...findTestableFiles(entryPath));
-    } else if (isTestableFile(entryPath)) {
+    } else if (shouldTest(entryPath)) {
       testableFiles.push(entryPath);
     }
   }
   return testableFiles;
 }
 
-function checkSnapshotTestForPaths(testableFileObjects: TestableFileObject[]) {
+function runSnapshotTestForPaths(testableFileObjects: TestableFileObject[]) {
   testableFileObjects.forEach((testableFileObject) => {
-    checkSnapshot(testableFileObject);
+    runSnapshot(testableFileObject);
   });
 }
 
@@ -58,7 +61,7 @@ export function easySnapshot(dirPath: string) {
     return { relative: path.relative(targetDir, filePath), absolute: filePath };
   });
 
-  checkSnapshotTestForPaths(testableFileObjects);
+  runSnapshotTestForPaths(testableFileObjects);
 }
 
 interface TestableFileObject {
