@@ -5,9 +5,9 @@ import { describe, expect, it } from "@jest/globals";
 function runSnapshot(testableFileObject: TestableFileObject) {
   describe(testableFileObject.relative + " Snapshot", () => {
     it("should match the saved snapshot", () => {
-      const htmlContent = fs.readFileSync(testableFileObject.absolute, "utf8");
+      const content = fs.readFileSync(testableFileObject.absolute, "utf8");
 
-      expect(htmlContent).toMatchSnapshot();
+      expect(content).toMatchSnapshot();
     });
   });
 }
