@@ -23,7 +23,10 @@ function shouldTest(filePath: string) {
   return false;
 }
 
-function findTestableFiles(directory: string): string[] {
+function findTestableFiles(
+  directory: string,
+  testableFiles: string[]
+): string[] {
   if (!fs.existsSync(directory)) {
     console.error(
       "We could not find any directory using the following path: " + directory
@@ -38,13 +41,11 @@ function findTestableFiles(directory: string): string[] {
 
   const entries = fs.readdirSync(directory);
 
-  const testableFiles = [];
-
   for (const entry of entries) {
     const entryPath = path.join(directory, entry);
 
     if (fs.existsSync(entryPath) && fs.lstatSync(entryPath).isDirectory()) {
-      testableFiles.push(...findTestableFiles(entryPath));
+      testableFiles.push(...findTestableFiles(entryPath, testableFiles));
     } else if (shouldTest(entryPath)) {
       testableFiles.push(entryPath);
     }
@@ -70,9 +71,10 @@ function runSnapshotTestForPaths(testableFileObjects: TestableFileObject[]) {
 export function easySnapshot(dirPath: string) {
   const targetDir = path.join(__dirname, dirPath);
 
-  console.log("path received: ", dirPath);
+  console.log("absolute path received: ", dirPath);
 
-  const testableFiles = findTestableFiles(targetDir);
+
+  const testableFiles = findTestableFiles(targetDir, []);
 
   const testableFileObjects = testableFiles.map((filePath) => {
     return { relative: path.relative(targetDir, filePath), absolute: filePath };
