@@ -1,5 +1,6 @@
 import path from "path";
 import fs from "fs";
+import { describe, expect, it } from "@jest/globals";
 
 function runSnapshot(testableFileObject: TestableFileObject) {
   describe(testableFileObject.relative + " Snapshot", () => {
