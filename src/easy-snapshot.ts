@@ -24,6 +24,18 @@ function shouldTest(filePath: string) {
 }
 
 function findTestableFiles(directory: string): string[] {
+  if (!fs.existsSync(directory)) {
+    console.error(
+      "We could not find any directory using the following path: " + directory
+    );
+    process.exit(1);
+  }
+
+  // if this is the path to a file, return it
+  if (isFile(directory)) {
+    return [directory];
+  }
+
   const entries = fs.readdirSync(directory);
 
   const testableFiles = [];
@@ -37,6 +49,15 @@ function findTestableFiles(directory: string): string[] {
       testableFiles.push(entryPath);
     }
   }
+
+  // if no testable files were found, exit with an error
+  if (testableFiles.length === 0) {
+    console.error(
+      "No files found in directory " + directory + " or its subdirectories"
+    );
+    process.exit(1);
+  }
+
   return testableFiles;
 }
 
@@ -52,11 +73,6 @@ export function easySnapshot(dirPath: string) {
   console.log("path received: ", dirPath);
 
   const testableFiles = findTestableFiles(targetDir);
-
-  if (testableFiles.length === 0) {
-    console.error("No files found in the directory.");
-    return;
-  }
 
   const testableFileObjects = testableFiles.map((filePath) => {
     return { relative: path.relative(targetDir, filePath), absolute: filePath };
