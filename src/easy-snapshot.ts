@@ -16,6 +16,10 @@ function isFile(filePath: string) {
   return fs.existsSync(filePath) && fs.lstatSync(filePath).isFile();
 }
 
+function isDirectory(filePath: string) {
+  return fs.existsSync(filePath) && fs.lstatSync(filePath).isDirectory();
+}
+
 function shouldTest(filePath: string) {
   if (isFile(filePath)) {
     return path.extname(filePath).toLowerCase() === ".html";
@@ -62,10 +66,6 @@ function findTestableFiles(directory: string): string[] {
   return files;
 }
 
-function isDirectory(filePath: string) {
-  return fs.existsSync(filePath) && fs.lstatSync(filePath).isDirectory();
-}
-
 function runSnapshotTestForPaths(testableFileObjects: TestableFileObject[]) {
   testableFileObjects.forEach((testableFileObject) => {
     runSnapshot(testableFileObject);
@@ -75,13 +75,6 @@ function runSnapshotTestForPaths(testableFileObjects: TestableFileObject[]) {
 export function easySnapshot(dirPath: string) {
   const currentDir = require.main?.path || process.cwd();
   const targetDir = path.join(currentDir, dirPath);
-
-  console.log("absolute path received: ", dirPath);
-
-  const testableDirs = findSubdirectories(targetDir);
-  testableDirs.push(targetDir);
-
-  const testableFiles = findTestableFiles(testableDirs);
 
   const testableFiles = findTestableFiles(targetDir);
   const testableFileObjects = testableFiles.map((filePath) => {
