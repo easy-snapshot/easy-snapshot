@@ -45,7 +45,7 @@ npm init -y # the -y flag will create your package.json using default values.
 npm install --save-dev easy-snapshot
 ```
 
-2. Create a test file "snapshot.test.js" and pass the path to the artifacts you want to check:
+2. Create a test file "snapshot.test.js" and indicate the path to the artifacts you want to check:
 
 ```js
 // By default jest will run all test files that end with .test.js.
