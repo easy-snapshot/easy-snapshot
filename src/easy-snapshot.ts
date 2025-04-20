@@ -23,39 +23,60 @@ function shouldTest(filePath: string) {
   return false;
 }
 
-function findTestableFiles(
-  directory: string,
-  testableFiles: string[]
-): string[] {
-  if (!fs.existsSync(directory)) {
-    console.error(
-      "We could not find any directory using the following path: " + directory
-    );
-    process.exit(1);
+function findSubdirectories(directory: string): string[] {
+  const subdirectories: string[] = [];
+  const stack: string[] = [directory];
+
+  while (stack.length > 0) {
+    const currentDir = stack.pop() as string;
+    const entries = fs.readdirSync(currentDir);
+
+    for (const entry of entries) {
+      const entryPath = path.join(currentDir, entry);
+      if (isDirectory(entryPath)) {
+        subdirectories.push(entryPath);
+        stack.push(entryPath);
+      }
+    }
   }
 
-  // if this is the path to a file, return it
-  if (isFile(directory)) {
-    return [directory];
-  }
+  return subdirectories;
+}
 
-  const entries = fs.readdirSync(directory);
+function isDirectory(filePath: string) {
+  return fs.existsSync(filePath) && fs.lstatSync(filePath).isDirectory();
+}
 
-  for (const entry of entries) {
-    const entryPath = path.join(directory, entry);
+function findTestableFiles(directories: string[]): string[] {
+  const testableFiles: string[] = [];
+  for (const directory of directories) {
+    if (!fs.existsSync(directory)) {
+      console.error(
+        "We could not find anything to test using the following path: " +
+          directory
+      );
+      process.exit(1);
+    }
 
-    if (fs.existsSync(entryPath) && fs.lstatSync(entryPath).isDirectory()) {
-      testableFiles.push(...findTestableFiles(entryPath, testableFiles));
-    } else if (shouldTest(entryPath)) {
-      testableFiles.push(entryPath);
+    // if this is the path to a file, return it
+    if (isFile(directory)) {
+      return [directory];
+    }
+
+    const entries = fs.readdirSync(directory);
+
+    for (const entry of entries) {
+      const entryPath = path.join(directory, entry);
+
+      if (shouldTest(entryPath)) {
+        testableFiles.push(entryPath);
+      }
     }
   }
 
   // if no testable files were found, exit with an error
   if (testableFiles.length === 0) {
-    console.error(
-      "No files found in directory " + directory + " or its subdirectories"
-    );
+    console.error("No testable files found.");
     process.exit(1);
   }
 
@@ -73,8 +94,10 @@ export function easySnapshot(dirPath: string) {
 
   console.log("absolute path received: ", dirPath);
 
+  const testableDirs = findSubdirectories(targetDir);
+  testableDirs.push(targetDir);
 
-  const testableFiles = findTestableFiles(targetDir, []);
+  const testableFiles = findTestableFiles(testableDirs);
 
   const testableFileObjects = testableFiles.map((filePath) => {
     return { relative: path.relative(targetDir, filePath), absolute: filePath };
