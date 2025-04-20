@@ -1,6 +1,6 @@
 {
   "name": "easy-snapshot",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Get started with snapshot testing instantly.",
   "main": "./dist/easy-snapshot.js",
   "types": "./dist/easy-snapshot.d.ts",
