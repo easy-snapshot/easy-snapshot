@@ -23,9 +23,22 @@ function shouldTest(filePath: string) {
   return false;
 }
 
-function findSubdirectories(directory: string): string[] {
-  const subdirectories: string[] = [];
+function findTestableFiles(directory: string): string[] {
   const stack: string[] = [directory];
+  const files: string[] = [];
+
+  if (!fs.existsSync(directory)) {
+    console.error(
+      "We could not find anything to test using the following path: " +
+        directory
+    );
+    process.exit(1);
+  }
+
+  // if this is the path to a file, return it
+  if (isFile(directory)) {
+    return [directory];
+  }
 
   while (stack.length > 0) {
     const currentDir = stack.pop() as string;
@@ -34,53 +47,23 @@ function findSubdirectories(directory: string): string[] {
     for (const entry of entries) {
       const entryPath = path.join(currentDir, entry);
       if (isDirectory(entryPath)) {
-        subdirectories.push(entryPath);
         stack.push(entryPath);
+      } else if (shouldTest(entryPath)) {
+        files.push(entryPath);
       }
     }
   }
 
-  return subdirectories;
-}
-
-function isDirectory(filePath: string) {
-  return fs.existsSync(filePath) && fs.lstatSync(filePath).isDirectory();
-}
-
-function findTestableFiles(directories: string[]): string[] {
-  const testableFiles: string[] = [];
-  for (const directory of directories) {
-    if (!fs.existsSync(directory)) {
-      console.error(
-        "We could not find anything to test using the following path: " +
-          directory
-      );
-      process.exit(1);
-    }
-
-    // if this is the path to a file, return it
-    if (isFile(directory)) {
-      return [directory];
-    }
-
-    const entries = fs.readdirSync(directory);
-
-    for (const entry of entries) {
-      const entryPath = path.join(directory, entry);
-
-      if (shouldTest(entryPath)) {
-        testableFiles.push(entryPath);
-      }
-    }
-  }
-
-  // if no testable files were found, exit with an error
-  if (testableFiles.length === 0) {
+  if (files.length === 0) {
     console.error("No testable files found.");
     process.exit(1);
   }
 
-  return testableFiles;
+  return files;
+}
+
+function isDirectory(filePath: string) {
+  return fs.existsSync(filePath) && fs.lstatSync(filePath).isDirectory();
 }
 
 function runSnapshotTestForPaths(testableFileObjects: TestableFileObject[]) {
@@ -100,6 +83,7 @@ export function easySnapshot(dirPath: string) {
 
   const testableFiles = findTestableFiles(testableDirs);
 
+  const testableFiles = findTestableFiles(targetDir);
   const testableFileObjects = testableFiles.map((filePath) => {
     return { relative: path.relative(targetDir, filePath), absolute: filePath };
   });
