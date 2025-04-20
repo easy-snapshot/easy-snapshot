@@ -90,7 +90,8 @@ function runSnapshotTestForPaths(testableFileObjects: TestableFileObject[]) {
 }
 
 export function easySnapshot(dirPath: string) {
-  const targetDir = path.join(__dirname, dirPath);
+  const currentDir = require.main?.path || process.cwd();
+  const targetDir = path.join(currentDir, dirPath);
 
   console.log("absolute path received: ", dirPath);
 
