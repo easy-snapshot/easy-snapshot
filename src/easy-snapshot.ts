@@ -20,14 +20,34 @@ function isDirectory(filePath: string) {
   return fs.existsSync(filePath) && fs.lstatSync(filePath).isDirectory();
 }
 
-function shouldTest(filePath: string) {
+function shouldTest(filePath: string, options?: SnapshotOptions) {
   if (isFile(filePath)) {
-    return path.extname(filePath).toLowerCase() === ".html";
+    // check if the file has the ignored extension
+    if (options?.ignoreExtensions) {
+      for (const extension of options.ignoreExtensions) {
+        if (filePath.endsWith(extension)) {
+          return false;
+        }
+      }
+    }
+
+    // check if the file has the correct extension
+    if (options?.extensions) {
+      for (const extension of options.extensions) {
+        if (filePath.endsWith(extension)) {
+          return true;
+        }
+      }
+      return false;
+    }
   }
-  return false;
+  return true;
 }
 
-function findTestableFiles(directory: string): string[] {
+function findTestableFiles(
+  directory: string,
+  options?: SnapshotOptions
+): string[] {
   const stack: string[] = [directory];
   const files: string[] = [];
 
@@ -52,7 +72,7 @@ function findTestableFiles(directory: string): string[] {
       const entryPath = path.join(currentDir, entry);
       if (isDirectory(entryPath)) {
         stack.push(entryPath);
-      } else if (shouldTest(entryPath)) {
+      } else if (shouldTest(entryPath, options)) {
         files.push(entryPath);
       }
     }
@@ -72,11 +92,11 @@ function runSnapshotTestForPaths(testableFileObjects: TestableFileObject[]) {
   });
 }
 
-export function easySnapshot(dirPath: string) {
+export function easySnapshot(dirPath: string, options?: SnapshotOptions) {
   const currentDir = require.main?.path || process.cwd();
   const targetDir = path.join(currentDir, dirPath);
 
-  const testableFiles = findTestableFiles(targetDir);
+  const testableFiles = findTestableFiles(targetDir, options);
   const testableFileObjects = testableFiles.map((filePath) => {
     return { relative: path.relative(targetDir, filePath), absolute: filePath };
   });
@@ -87,4 +107,9 @@ export function easySnapshot(dirPath: string) {
 interface TestableFileObject {
   relative: string;
   absolute: string;
+}
+
+interface SnapshotOptions {
+  extensions?: string[];
+  ignoreExtensions?: string[];
 }
